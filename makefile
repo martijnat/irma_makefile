@@ -28,8 +28,8 @@ clean:
 build: irma_api_server irma_js irma_web_service irma_glue
 
 run:
-	cd ${BASEDIR}"/irma_js" && xterm -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
-	cd ${BASEDIR}/irma_api_server/build/output/irma_api_server/  && xterm -e './run.sh' &
+	cd ${BASEDIR}"/irma_js" && xfce4-terminal -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
+	cd ${BASEDIR}/irma_api_server/build/output/irma_api_server/  && xfce4-terminal -e './run.sh' &
 	sleep 10		#wait for server to be up
 	mv ${BASEDIR}/irma_js/build/bower_components ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
 	mv ${BASEDIR}/irma_js/build/client ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
