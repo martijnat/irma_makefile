@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IP=`hostname -I | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n'`
+IP=`hostname -i | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n'`
 PORT="8081"
 
 # The trick here is that we purposfully output the smartwatch content to stderr

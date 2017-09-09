@@ -4,7 +4,7 @@ IP := $(shell hostname -i | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
 
 # Run as a non-root user from a fresh install of Debian 9 (stable)
 
-all: clean build run
+all: clean download build run
 
 
 # Installs all software needed but not present on a fresh install of debian
@@ -21,6 +21,7 @@ libs-debian:
 	npm install qrcode-terminal request jsonwebtoken fs
 
 libs-arch:
+	sudo pacman -Syu
 	sudo npm install -g grunt-cli
 	sudo npm install -g bower
 	sudo npm install -g compass
@@ -33,7 +34,13 @@ clean:
 	sudo chmod 777 ${BASEDIR}
 	rm -fr ~/irma_api_server || true
 
-build: irma_api_server irma_js irma_web_service irma_glue
+build: irma_api_server irma_js irma_glue
+
+download:
+	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_api_server'
+	cd ${BASEDIR}"/irma_api_server" && git submodule update --init
+	cd ${BASEDIR}"/irma_api_server/src/main/resources/" && git clone -b combined 'https://github.com/credentials/irma_configuration'
+	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_js'
 
 run:
 	cd ${BASEDIR}"/irma_js" && xfce4-terminal -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
@@ -46,16 +53,12 @@ run:
 	cd ${BASEDIR}"/irma_web_service/WebContent" && cp -r * ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
 
 irma_api_server:
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_api_server'
-	cd ${BASEDIR}"/irma_api_server" && git submodule update --init
-	cd ${BASEDIR}"/irma_api_server/src/main/resources/" && git clone -b combined 'https://github.com/credentials/irma_configuration'
 	cp ${BASEDIR}"/irma_api_server/src/main/resources/config.sample-demo.json" ${BASEDIR}"/irma_api_server/src/main/resources/config.json"
 	bash ${BASEDIR}"/irma_api_server/utils/keygen.sh" ${BASEDIR}"/irma_api_server/src/main/resources/sk" ${BASEDIR}"/irma_api_server/src/main/resources/pk"
 	cd ${BASEDIR}"/irma_api_server" && gradle buildProduct
 	cd ${BASEDIR}"/irma_api_server" && npm install qrcode-terminal request jsonwebtoken fs
 
 irma_js:
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_js'
 	sed -i "s,<IRMA_WEB_SERVER>,http://${IP}:8081/irma_api_server/server/,g" ${BASEDIR}/irma_js/examples/*
 	sed -i "s,<IRMA_API_SERVER>,http://${IP}:8081/irma_api_server/api/v2/,g" ${BASEDIR}/irma_js/examples/*
 #sed -i 's,<IRMA_API_SERVER>,https://demo.irmacard.org/tomcat/irma_api_server/api/v2/,g' ${BASEDIR}/irma_js/examples/*
@@ -63,9 +66,6 @@ irma_js:
 	cd ${BASEDIR}"/irma_js" && npm install
 	cd ${BASEDIR}"/irma_js" && bower install
 	cd ${BASEDIR}"/irma_js" && grunt build
-
-irma_web_service:
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_web_service'
 
 irma_glue:
 	cp issue.js              ${BASEDIR}/irma_api_server/utils/
