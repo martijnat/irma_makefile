@@ -8,12 +8,19 @@ all: clean build run
 
 
 # Installs all software needed but not present on a fresh install of debian
-libs:
+libs-debian:
 	sudo apt-get update
 	sudo apt-get upgrade
 	sudo apt-get install -y gradle openjdk-8-jre openjdk-8-jdk curl
 	curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
 	sudo apt-get install nodejs
+	sudo npm install -g grunt-cli
+	sudo npm install -g bower
+	sudo npm install -g compass
+	sudo npm install -g qrcode-terminal request jsonwebtoken fs
+	npm install qrcode-terminal request jsonwebtoken fs
+
+libs-arch:
 	sudo npm install -g grunt-cli
 	sudo npm install -g bower
 	sudo npm install -g compass
