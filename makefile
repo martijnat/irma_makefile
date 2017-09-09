@@ -1,5 +1,6 @@
 BASEDIR="/opt/irma"
-IP := $(shell hostname -I | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
+IP := $(shell hostname -i | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
+# IP := $(shell hostname -I | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
 
 # Run as a non-root user from a fresh install of Debian 9 (stable)
 
