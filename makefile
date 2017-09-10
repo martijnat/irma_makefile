@@ -77,8 +77,8 @@ run:
 	cd ${BASEDIR}"/irma_js" && ${TERMINAL} -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
 	cd ${BASEDIR}/irma_api_server/build/output/irma_api_server/  && ${TERMINAL} -e './run.sh' &
 	sleep 10		#wait for server to be up
-	mv ${BASEDIR}/irma_js/build/bower_components ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/client ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/examples ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/server ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	cp -r ${BASEDIR}/irma_js/build/bower_components ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	cp -r ${BASEDIR}/irma_js/build/client ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	cp -r ${BASEDIR}/irma_js/build/examples ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	cp -r ${BASEDIR}/irma_js/build/server ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
 	cd ${BASEDIR}"/irma_web_service/WebContent" && cp -r * ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
