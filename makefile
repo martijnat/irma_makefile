@@ -1,6 +1,8 @@
 BASEDIR="/opt/irma"
 IP := $(shell hostname -i | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
 # IP := $(shell hostname -I | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
+TERMINAL="xfce4-terminal"
+ROOT_TERMINAL="xterm"
 
 # Run as a non-root user from a fresh install of Debian 9 (stable)
 
@@ -34,7 +36,11 @@ clean:
 	sudo chmod 777 ${BASEDIR}
 	rm -fr ~/irma_api_server || true
 
-build: irma_api_server irma_js irma_glue
+build: network irma_api_server irma_js irma_web_service irma_glue
+
+network:
+	sudo ${ROOT_TERMINAL} -e "ufw disable; create_ap wlp3s0 enp2s0 tmpwifi tmptmptmp; ufw enable" &
+	sleep 10
 
 download:
 	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_api_server'
@@ -42,15 +48,8 @@ download:
 	cd ${BASEDIR}"/irma_api_server/src/main/resources/" && git clone -b combined 'https://github.com/credentials/irma_configuration'
 	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_js'
 
-run:
-	cd ${BASEDIR}"/irma_js" && xfce4-terminal -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
-	cd ${BASEDIR}/irma_api_server/build/output/irma_api_server/  && xfce4-terminal -e './run.sh' &
-	sleep 10		#wait for server to be up
-	mv ${BASEDIR}/irma_js/build/bower_components ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/client ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/examples ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	mv ${BASEDIR}/irma_js/build/server ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
-	cd ${BASEDIR}"/irma_web_service/WebContent" && cp -r * ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+irma_web_service:
+	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_web_service'
 
 irma_api_server:
 	cp ${BASEDIR}"/irma_api_server/src/main/resources/config.sample-demo.json" ${BASEDIR}"/irma_api_server/src/main/resources/config.json"
@@ -73,3 +72,13 @@ irma_glue:
 	cp issue.sh              ${BASEDIR}/irma_api_server/utils/
 	cp verify.sh             ${BASEDIR}/irma_api_server/utils/
 	cp connect_smartwatch.sh ${BASEDIR}/irma_api_server/utils/
+
+run:
+	cd ${BASEDIR}"/irma_js" && ${TERMINAL} -e 'grunt --server_url="http://${IP}:8081/irma_api_server/"' &
+	cd ${BASEDIR}/irma_api_server/build/output/irma_api_server/  && ${TERMINAL} -e './run.sh' &
+	sleep 10		#wait for server to be up
+	mv ${BASEDIR}/irma_js/build/bower_components ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	mv ${BASEDIR}/irma_js/build/client ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	mv ${BASEDIR}/irma_js/build/examples ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	mv ${BASEDIR}/irma_js/build/server ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+	cd ${BASEDIR}"/irma_web_service/WebContent" && cp -r * ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
