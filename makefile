@@ -1,12 +1,12 @@
 BASEDIR="/opt/irma"
+DOWNLOADDIR="/opt/irma_git"
 IP := $(shell hostname -i | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
-# IP := $(shell hostname -I | tr ' ' '\n' | tail -n 2 | head -n 1 | tr -d '\n')
 TERMINAL="xfce4-terminal"
 ROOT_TERMINAL="xterm"
 
 # Run as a non-root user from a fresh install of Debian 9 (stable)
 
-all: clean download build run
+all: clean build run
 
 
 # Installs all software needed but not present on a fresh install of debian
@@ -32,27 +32,27 @@ libs-arch:
 
 clean:
 	sudo rm -fr ${BASEDIR} || true
-	sudo mkdir ${BASEDIR} || true
-	sudo chmod 777 ${BASEDIR}
-	rm -fr ~/irma_api_server || true
+	sudo cp -r ${DOWNLOADDIR}/ ${BASEDIR}/
+	sudo chmod 777 -R ${BASEDIR}
 
-build: network irma_api_server irma_js irma_web_service irma_glue
+build: network irma_api_server irma_js irma_glue
 
 network:
 	sudo ${ROOT_TERMINAL} -e "ufw disable; create_ap wlp3s0 enp2s0 tmpwifi tmptmptmp; ufw enable" &
-	sleep 10
 
-download:
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_api_server'
-	cd ${BASEDIR}"/irma_api_server" && git submodule update --init
-	cd ${BASEDIR}"/irma_api_server/src/main/resources/" && git clone -b combined 'https://github.com/credentials/irma_configuration'
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_js'
-
-irma_web_service:
-	cd ${BASEDIR} && git clone 'https://github.com/credentials/irma_web_service'
+git_repositories:
+	echo test
+	sudo rm -fr ${DOWNLOADDIR} || true
+	sudo mkdir ${DOWNLOADDIR}
+	sudo chmod 777 -R ${DOWNLOADDIR}
+	cd ${DOWNLOADDIR} && git clone 'https://github.com/credentials/irma_api_server'
+	cd ${DOWNLOADDIR}"/irma_api_server" && git submodule update --init
+	cd ${DOWNLOADDIR}"/irma_api_server/src/main/resources/" && git clone -b combined 'https://github.com/credentials/irma_configuration'
+	cd ${DOWNLOADDIR} && git clone 'https://github.com/credentials/irma_js'
+	cd ${DOWNLOADDIR} && git clone 'https://github.com/credentials/irma_web_service'
 
 irma_api_server:
-	cp ${BASEDIR}"/irma_api_server/src/main/resources/config.sample-demo.json" ${BASEDIR}"/irma_api_server/src/main/resources/config.json"
+	cp ${DOWNLOADDIR}"/irma_api_server/src/main/resources/config.sample-demo.json" ${BASEDIR}"/irma_api_server/src/main/resources/config.json"
 	bash ${BASEDIR}"/irma_api_server/utils/keygen.sh" ${BASEDIR}"/irma_api_server/src/main/resources/sk" ${BASEDIR}"/irma_api_server/src/main/resources/pk"
 	cd ${BASEDIR}"/irma_api_server" && gradle buildProduct
 	cd ${BASEDIR}"/irma_api_server" && npm install qrcode-terminal request jsonwebtoken fs
