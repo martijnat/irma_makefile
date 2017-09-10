@@ -60,7 +60,6 @@ irma_api_server:
 irma_js:
 	sed -i "s,<IRMA_WEB_SERVER>,http://${IP}:8081/irma_api_server/server/,g" ${BASEDIR}/irma_js/examples/*
 	sed -i "s,<IRMA_API_SERVER>,http://${IP}:8081/irma_api_server/api/v2/,g" ${BASEDIR}/irma_js/examples/*
-#sed -i 's,<IRMA_API_SERVER>,https://demo.irmacard.org/tomcat/irma_api_server/api/v2/,g' ${BASEDIR}/irma_js/examples/*
 	rm -fr ${BASEDIR}/irma_js/build || true
 	cd ${BASEDIR}"/irma_js" && npm install
 	cd ${BASEDIR}"/irma_js" && bower install
