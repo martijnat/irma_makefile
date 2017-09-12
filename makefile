@@ -8,7 +8,6 @@ ROOT_TERMINAL="xterm"
 
 all: clean build run
 
-
 # Installs all software needed but not present on a fresh install of debian
 libs-debian:
 	sudo apt-get update
