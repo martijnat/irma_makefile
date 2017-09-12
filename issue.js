@@ -10,7 +10,7 @@ var iprequest = {
         "credentials": [
             {
                 "credential": "irma-demo.MijnOverheid.ageLower",
-                "validity": 1482969600,
+                "validity": 2087769600,
                 "attributes": {
                     "over12": "yes",
                     "over16": "yes",
@@ -20,20 +20,12 @@ var iprequest = {
             },
             {
                 "credential": "irma-demo.MijnOverheid.address",
-                "validity": 1482969600,
+                "validity": 2087769600,
                 "attributes": {
                     "country": "The Netherlands",
                     "city": "Nijmegen",
                     "street": "Toernooiveld 212",
                     "zipcode": "6525 EC"
-                }
-            }
-        ],
-        "disclose": [
-            {
-                "label": "Age (higher)",
-                "attributes": {
-                    "irma-demo.MijnOverheid.ageHigher": "present"
                 }
             }
         ]

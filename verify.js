@@ -10,12 +10,10 @@ var sprequest = {
 	"request": {
 		"content": [
 			{
-				"label": "Name",
-				"attributes": ["irma-demo.MijnOverheid.fullName.firstname"]
-			},
-			{
-				"label": "Over 21",
-				"attributes": ["irma-demo.MijnOverheid.ageLower.over18", "irma-demo.MijnOverheid.ageLower.over21"]
+				"label": "Over 16",
+			    "attributes": ["irma-demo.MijnOverheid.ageLower.over16",
+                                           "irma-demo.MijnOverheid.ageLower.over18",
+                                           "irma-demo.MijnOverheid.ageLower.over21"]
 			}
 		]
 	}
