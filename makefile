@@ -57,12 +57,21 @@ irma_api_server:
 	cd ${BASEDIR}"/irma_api_server" && npm install qrcode-terminal request jsonwebtoken fs
 
 irma_js:
+# sed -i "s,<IRMA_WEB_SERVER>,http://${IP}:8081/irma_api_server/server/,g" ${BASEDIR}/irma_js/examples/*
+# sed -i "s,<IRMA_API_SERVER>,http://${IP}:8081/irma_api_server/api/v2/,g" ${BASEDIR}/irma_js/examples/*
+	rm -fr ${BASEDIR}/irma_js/build || true
+	cd ${BASEDIR}"/irma_js" && npm install
+	cd ${BASEDIR}"/irma_js" && bower install
+	cd ${BASEDIR}"/irma_js" && grunt --server_url="http://${IP}:8081/irma_api_server/" build
+
+
+irma_js_offline:
 	sed -i "s,<IRMA_WEB_SERVER>,http://${IP}:8081/irma_api_server/server/,g" ${BASEDIR}/irma_js/examples/*
 	sed -i "s,<IRMA_API_SERVER>,http://${IP}:8081/irma_api_server/api/v2/,g" ${BASEDIR}/irma_js/examples/*
 	rm -fr ${BASEDIR}/irma_js/build || true
 	cd ${BASEDIR}"/irma_js" && npm install
-	cd ${BASEDIR}"/irma_js" && bower install
-	cd ${BASEDIR}"/irma_js" && grunt build
+	cd ${BASEDIR}"/irma_js" && grunt --force --server_url="http://${IP}:8081/irma_api_server/" build
+
 
 irma_glue:
 	cp issue.js              ${BASEDIR}/irma_api_server/utils/
@@ -80,3 +89,6 @@ run:
 	cp -r ${BASEDIR}/irma_js/build/examples ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
 	cp -r ${BASEDIR}/irma_js/build/server ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
 	cd ${BASEDIR}"/irma_web_service/WebContent" && cp -r * ${BASEDIR}/irma_api_server/build/output/irma_api_server/webapps-exploded/irma_api_server/webapp/
+
+offlinenetwork:
+	sudo ${ROOT_TERMINAL} -e "ufw disable; create_ap wlp3s0 wlp3s0 tmpwifi tmptmptmp; ufw enable"
